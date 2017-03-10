@@ -13,7 +13,11 @@ def ppm_error(mass, theoretical_mass):
     """
     returns the ppm error of a given observed mass, and theoretical mass
     """
-    theoretical_mass = Descriptors.ExactMolWt(mol)
+    if not isinstance(theoretical_mass, float):
+        if isinstance(theoretical_mass, int):
+            theoretical_mass = float(theoretical_mass)
+        else:
+            theoretical_mass = Descriptors.ExactMolWt(theoretical_mass)
     ppm = (mass - theoretical_mass) / theoretical_mass * 1e6
     return ppm
 
