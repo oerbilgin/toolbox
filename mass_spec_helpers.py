@@ -1,3 +1,4 @@
+import sys
 sys.path.insert(1,'/global/project/projectdirs/metatlas/anaconda/lib/python2.7/site-packages' )
 from metatlas import metatlas_objects as metob
 

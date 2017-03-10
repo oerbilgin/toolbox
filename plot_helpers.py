@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
-%matplotlib inline
 
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
