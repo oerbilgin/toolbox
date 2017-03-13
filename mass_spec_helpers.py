@@ -100,7 +100,7 @@ def data_convert(row, data_pattern='Peak height', search='endswith'):
     t.sort_values('x', inplace=True)
     
     return t
-    
+
 def ctrl_expt_compare(medium, experimental, fold_change=4):
     """
     Removes features that are within a window of detection for both medium control and an experimental condition.
