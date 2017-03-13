@@ -2,6 +2,8 @@ import sys
 sys.path.insert(1,'/global/project/projectdirs/metatlas/anaconda/lib/python2.7/site-packages' )
 from metatlas import metatlas_objects as metob
 
+import pandas as pd
+
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import Draw
@@ -57,7 +59,7 @@ def find_mass(target_weight, ppm, df, mz_column_name='mz', rt_column_name='rt_pe
     -------
     returns a slice of the input dataframe that only contains rows that matched the search parameters
     """
-    w = ms.ppm_window(target_weight, ppm)
+    w = ppm_window(target_weight, ppm)
     a = df[(df[mz_column_name] >= w[0]) & (df[mz_column_name] <= w[1])]
     if rt is not None:
         a = a[(a[rt_column_name] > rt - rt_bound) & (a[rt_column_name] < rt + rt_bound)]
@@ -130,7 +132,7 @@ def ctrl_expt_compare(medium, experimental, fold_change=4):
                 # if the control is zero, don't chuck it regardless of what experimental is
                 if ctrl['y'] == 0.:
                     continue
-                # otherwise, look at the fold difference between experimental and control
+                # otherwise, look at the fold difference between experimental and control
                 else:
                     fold = y / ctrl['y']
                     # if the experimental is greater than 4x the control or less than .25x of the control, dont chuck it
