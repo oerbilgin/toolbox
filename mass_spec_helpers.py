@@ -143,3 +143,31 @@ def ctrl_expt_compare(medium, experimental, fold_change=4):
                         return False
     # if the experimental is always less than 1/4x of control or greater than 4x of control across all control data points, then keep it
     return True
+
+def cpd_from_inchikey(inchikey, blocks=1):
+    '''
+    Get a metabolite atlas compound from inchikey.
+    
+    Inputs
+    ------
+    inchikey: a standard inchikey, e.g. RYYVLZVUVIJVGH-UHFFFAOYSA-N
+    blocks: which blocks of the inchikey to use as a search pattern to find compound(s) in metatlas
+        1: RYYVLZVUVIJVGH
+        2: RYYVLZVUVIJVGH-UHFFFAOYSA
+        3: RYYVLZVUVIJVGH-UHFFFAOYSA-N
+
+    '''
+    if blocks not in [1,2,3]:
+        raise RuntimeError('block argument must be 1, 2, or 3')
+
+    if (inchikey != '') and (inchikey is not None):
+        search_pattern = '-'.join(inchikey.split('-')[:blocks])
+        cpds = metob.retrieve('Compounds', inchi_key='%s%%'%(inchikey.split('-')[0]), username='*')
+        if len(cpds) != 0:
+            return cpds[0].name
+        else:
+            return None
+    else:
+        return inchikey
+
+
