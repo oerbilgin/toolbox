@@ -90,3 +90,13 @@ Showing error via shading (good for time series)
 ax.plot(x, y) # main data
 ax.fill_between(x, y-error, y+error, color=, alpha=0.2)
 ```
+
+### Trendlines
+Linear
+```python
+from scipy.stats import linregress
+slope, intcpt, rval, pval, err = linregress(x, y)
+fit_fn = np.poly1d([slope, intcpt])
+sorted_idx = np.argsort(x)
+ax.plt(x[sorted_idx], fit_fn(x[sorted_idx]))
+```
