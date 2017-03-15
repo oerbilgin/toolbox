@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
+from scipy.stats import linregress
 
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
@@ -64,3 +65,48 @@ def subplot_row_col(n_plots, n_cols=5):
         n_rows = int(a + 1)
     else: n_rows = int(a)
     return n_rows
+def trendline(x, y, poly=1, err=False, sigma=2):
+    """
+    Returns trendline coordinates and optionally error
+    
+    Adapted from:
+    http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get-1-sigma-uncertainty-around-the-estimated-curve
+    
+    Inputs
+    ------
+    x: x coordinate data of sample
+    y: y coordinate data of sample
+    poly: degree of polynomial fit
+    err: False to just get x_fit and y_fit coordinates; True to get error bound
+    sigma: how many standard deviations of error to return
+    
+    Outputs
+    -------
+    x: sorted x values from sample data
+    y_fit: y values for the best fit
+    sigma_y_fit: error of y_fit; returned when err==True
+    
+    Example Usage (linear regression)
+    ---------------------------------
+    xfit, yfit, err = trendline(x,y, err=True)
+    fig, ax = plt.subplots()
+    ax.plot(x, y, color='coral', marker='o', linestyle='') # data points
+    ax.plot(xfit, yfit, color='k') # linear regression
+    ax.plot(xfit, yfit+err, color='k', linestyle='--') # + 2sigma
+    ax.plot(xfit, yfit-err, color='k', linestyle='--') # - 2sigma
+    """
+    p, cov = np.polyfit(x, y, poly, cov=True)
+    sorted_idx = np.argsort(x)
+    x = x[sorted_idx]
+    
+    ## this is copied almost directly from the SO post
+    TT = np.vstack([x**(poly-i) for i in range(n+1)]).T
+    y_fit = np.dot(TT, p)  # matrix multiplication calculates the polynomial values
+    cov_y_fit = np.dot(TT, np.dot(cov, TT.T)) # C_y = TT*C_z*TT.T
+    sigma_y_fit = np.sqrt(np.diag(cov_y_fit)) * sigma # Standard deviations are sqrt of diagonal
+    ##
+    
+    if not err:
+        return x, y_fit
+    else:
+        return x, y_fit, sigma_y_fit
