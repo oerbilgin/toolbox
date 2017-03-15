@@ -40,3 +40,27 @@ def cmap_color(curve_idx, n_curves, color_map='viridis'):
     scalar_map = cmx.ScalarMappable(norm=c_norm, cmap=cmap)
     color = scalar_map.to_rgba(curve_idx)
     return color
+
+def subplot_row_col(n_plots, n_cols=5):
+    """
+    determines number of rows  for subplots based on the total number of plots and number of columns.
+
+    For use with matplotlib.subplots():
+        n_rows, n_cols = subplot_row_col(7)
+        fig, axs = plt.subplots(n_rows, n_cols)
+    
+    Inputs
+    ------
+    n_plots: total number of subplots
+    n_cols: how many columns you want
+    
+    Outputs
+    ------
+    n_rows: integer value of number of rows to encompass the total number of plots
+    """
+    a = np.floor(n_plots / float(n_cols))
+    b = n_plots % float(n_cols)
+    if b != 0.:
+        n_rows = int(a + 1)
+    else: n_rows = int(a)
+    return n_rows
