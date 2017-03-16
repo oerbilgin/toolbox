@@ -34,17 +34,20 @@ Makes plotting lots of subplots easy
 ### `calc_perp()`
 Calculates a point on a line perpendicular to an arbitrary point
 
-###`twod_dist()`
+### `twod_dist()`
 Calculates distance between two 2D points
 
-###`elbow_point()`
+### `elbow_point()`
 Finds the elbow point of an elbow plot
 
-###`calculate_stddev_lines()`
+### `calculate_stddev_lines()`
 Calculates the linear regression of a 2D dataset, and gives you the vertical distance from the trendline that encompasses n-standard deviations of the data
 
-###`trendline()`
+### `trendline()`
 Calculates a polynomial fit, optionally gives you confidence intervals for the polynomial, optionally calls calculate_stddev_lines(), as long as you're just doing a linear regression
+
+[trendline example Notebook](https://github.com/oerbilgin/toolbox/blob/master/exammple_notebooks/linear_regression.ipynb)
+
 ![trendline example](https://github.com/oerbilgin/toolbox/blob/master/images/linreg.png)
-[Trendline() example Notebook](https://github.com/oerbilgin/toolbox/blob/master/exammple_notebooks/linear_regression.ipynb)
+
 
