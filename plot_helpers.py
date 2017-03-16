@@ -145,9 +145,13 @@ def elbow_point(x_vals, y_vals):
         the-l-method-to-determine-the-number-of-k-means-clusters
     """
     # get the formula for the hypotenuse
-    A = [x_vals[0], x_vals[-1]]
-    B = [y_vals[0], y_vals[-1]]
-    z = np.polyfit(A, B, 1)
+    line_x = [x_vals[0], x_vals[-1]]
+    line_y = [y_vals[0], y_vals[-1]]
+    
+    A = [line_x[0], line_y[0]]
+    B = [line_x[1], line_y[1]]
+    
+    z = np.polyfit(line_x, line_y, 1)
     p = np.poly1d(z)
     maxdist=0
     for i, y in enumerate(y_vals):

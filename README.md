@@ -40,6 +40,10 @@ Calculates distance between two 2D points
 ### `elbow_point()`
 Finds the elbow point of an elbow plot
 
+[elbowpoint example Notebook](https://github.com/oerbilgin/toolbox/blob/master/example_notebooks/elbowfinder.ipynb)
+
+![elbowpoint example](https://github.com/oerbilgin/toolbox/blob/master/images/elbow.png)
+
 ### `calculate_stddev_lines()`
 Calculates the linear regression of a 2D dataset, and gives you the vertical distance from the trendline that encompasses n-standard deviations of the data
 
