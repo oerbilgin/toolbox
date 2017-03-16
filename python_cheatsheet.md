@@ -35,7 +35,9 @@ coral, yellowgreen, lightskyblue, gold, gray, black
 ```python
 import matplotlib.pyplot as plt
 %matplotlib inline #only when in an Ipython notebook
-ax1, fig = plt.subplots() # it is always better to use axes instead of plt for more control of multiple axes and/or multiple plots
+# it is always better to use axes instead of plt for more control of 
+# multiple axes and/or multiple plots
+ax1, fig = plt.subplots() 
 ax1.plot(x, y, color=, label=, marker=, linestyle=, linewidth=)
 ax1.set_ylabel('label')
 ax1.set_xlabel('label')
