@@ -82,7 +82,9 @@ def trendline(x, y, poly=1, err=False, sigma=2):
     y: y coordinate data of sample
     poly: degree of polynomial fit
     err: False to just get x_fit and y_fit coordinates; True to get error bound
-    sigma: how many standard deviations of error to return
+    sigma: corresponds to confidence interval:
+        2= 95% CI
+        3= 99% CI
     
     Outputs
     -------
@@ -125,7 +127,7 @@ def trendline(x, y, poly=1, err=False, sigma=2):
         return x, trend_fn
     else:
         ## this is copied almost directly from the SO post
-        TT = np.vstack([x**(poly-i) for i in range(n+1)]).T
+        TT = np.vstack([x**(poly-i) for i in range(poly+1)]).T
         # matrix multiplication calculates the polynomial values
         y_fit = np.dot(TT, p)
         # C_y = TT*C_z*TT.T
