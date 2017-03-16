@@ -6,34 +6,37 @@ from scipy.stats import t
 
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
-    returns the suitable color from the given color map for the plot number
+    returns the suitable color from the given color map for the plot 
+    number
     
     Inputs
     ------
-    curve_idx: index position of the curve you are getting the plot for
-    n_curves: total number of curves you want to plot with the color map
-    color_map: a valid matplotlib color map. Available choices:
+    curve_idx:  index position of the curve you are getting the plot for
+    n_curves:   total number of curves you want to plot with the color 
+                map
+    color_map:  a valid matplotlib color map. Available choices:
     
-    cmaps = [('Perceptually Uniform Sequential',
-                            ['viridis', 'inferno', 'plasma', 'magma']),
-         ('Sequential',     ['Blues', 'BuGn', 'BuPu',
-                             'GnBu', 'Greens', 'Greys', 'Oranges', 'OrRd',
-                             'PuBu', 'PuBuGn', 'PuRd', 'Purples', 'RdPu',
-                             'Reds', 'YlGn', 'YlGnBu', 'YlOrBr', 'YlOrRd']),
-         ('Sequential (2)', ['afmhot', 'autumn', 'bone', 'cool',
-                             'copper', 'gist_heat', 'gray', 'hot',
-                             'pink', 'spring', 'summer', 'winter']),
-         ('Diverging',      ['BrBG', 'bwr', 'coolwarm', 'PiYG', 'PRGn', 'PuOr',
-                             'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn', 'Spectral',
-                             'seismic']),
-         ('Qualitative',    ['Accent', 'Dark2', 'Paired', 'Pastel1',
-                             'Pastel2', 'Set1', 'Set2', 'Set3', 'Vega10',
-                             'Vega20', 'Vega20b', 'Vega20c']),
-         ('Miscellaneous',  ['gist_earth', 'terrain', 'ocean', 'gist_stern',
-                             'brg', 'CMRmap', 'cubehelix',
-                             'gnuplot', 'gnuplot2', 'gist_ncar',
-                             'nipy_spectral', 'jet', 'rainbow',
-                             'gist_rainbow', 'hsv', 'flag', 'prism'])]
+    cmaps = 
+    [('Perceptually Uniform Sequential',
+                        ['viridis', 'inferno', 'plasma', 'magma']),
+     ('Sequential',     ['Blues', 'BuGn', 'BuPu',
+                         'GnBu', 'Greens', 'Greys', 'Oranges', 'OrRd',
+                         'PuBu', 'PuBuGn', 'PuRd', 'Purples', 'RdPu',
+                         'Reds', 'YlGn', 'YlGnBu', 'YlOrBr', 'YlOrRd']),
+     ('Sequential (2)', ['afmhot', 'autumn', 'bone', 'cool',
+                         'copper', 'gist_heat', 'gray', 'hot',
+                         'pink', 'spring', 'summer', 'winter']),
+     ('Diverging',      ['BrBG', 'bwr', 'coolwarm', 'PiYG', 'PRGn', 'PuOr',
+                         'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn', 'Spectral',
+                         'seismic']),
+     ('Qualitative',    ['Accent', 'Dark2', 'Paired', 'Pastel1',
+                         'Pastel2', 'Set1', 'Set2', 'Set3', 'Vega10',
+                         'Vega20', 'Vega20b', 'Vega20c']),
+     ('Miscellaneous',  ['gist_earth', 'terrain', 'ocean', 'gist_stern',
+                         'brg', 'CMRmap', 'cubehelix',
+                         'gnuplot', 'gnuplot2', 'gist_ncar',
+                         'nipy_spectral', 'jet', 'rainbow',
+                         'gist_rainbow', 'hsv', 'flag', 'prism'])]
 
     """
     cmap = plt.get_cmap('viridis')
@@ -44,8 +47,8 @@ def cmap_color(curve_idx, n_curves, color_map='viridis'):
 
 def subplot_row_col(n_plots, n_cols=5):
     """
-    determines number of rows  for subplots based on the total number of plots 
-    and number of columns.
+    determines number of rows  for subplots based on the total number of
+    plots and number of columns.
 
     For use with matplotlib.subplots():
         n_rows, n_cols = subplot_row_col(7)
@@ -53,13 +56,13 @@ def subplot_row_col(n_plots, n_cols=5):
     
     Inputs
     ------
-    n_plots: total number of subplots
-    n_cols: how many columns you want
+    n_plots:    total number of subplots
+    n_cols:     how many columns you want
     
     Outputs
     ------
-    n_rows: integer value of number of rows to encompass the total number of 
-            plots
+    n_rows: integer value of number of rows to encompass the total 
+            number of plots
     """
     a = np.floor(n_plots / float(n_cols))
     b = n_plots % float(n_cols)
@@ -71,8 +74,8 @@ def subplot_row_col(n_plots, n_cols=5):
 def calc_perp(A, B, C):
     """
     Given a line segment connecting points A-B and a third point C, 
-        calculate where point D is on the line that makes a perpendicular 
-        line to connect C to A-B
+    calculate where point D is on the line that makes a 
+    perpendicular line to connect C to A-B
     
     Inputs
     ------
@@ -80,12 +83,14 @@ def calc_perp(A, B, C):
 
     Outputs
     -------
-    Dx, Dy: x and y coordinates of point D that forms a perpendicular line from
-            AB to C
+    Dx, Dy: x and y coordinates of point D that forms a perpendicular 
+            line from AB to C
     
     from:
-    http://stackoverflow.com/questions/10301001/perpendicular-on-a-line-segment-from-a-given-point
-    http://stackoverflow.com/questions/1811549/perpendicular-on-a-line-from-a-given-point
+    http://stackoverflow.com/questions/10301001/perpendicular-on-a-line-
+        segment-from-a-given-point
+    http://stackoverflow.com/questions/1811549/perpendicular-on-a-line-
+        from-a-given-point
     """  
     Ax,Ay = A
     Bx,By = B
@@ -123,8 +128,8 @@ def twod_dist(a, b):
 
 def elbow_point(x_vals, y_vals):
     """
-    calculates the elbow point of a plot by finding the point furthest from the
-        line created between first and last values
+    calculates the elbow point of a plot by finding the point furthest 
+    from the line created between first and last values
 
     Inputs
     ------
@@ -132,11 +137,12 @@ def elbow_point(x_vals, y_vals):
 
     Outputs
     -------
-    elbow_idx: The index of x_vals and y_vals that corresponds to the data
-                point that is the elbow
+    elbow_idx:  The index of x_vals and y_vals that corresponds to the 
+                data point that is the elbow
 
     from:
-    http://stackoverflow.com/questions/4033821/using-a-smoother-with-the-l-method-to-determine-the-number-of-k-means-clusters
+    http://stackoverflow.com/questions/4033821/using-a-smoother-with-
+        the-l-method-to-determine-the-number-of-k-means-clusters
     """
     # get the formula for the hypotenuse
     A = [x_vals[0], x_vals[-1]]
@@ -155,29 +161,39 @@ def elbow_point(x_vals, y_vals):
 
 def calculate_stddev_lines(x, y, sigma=2):
     """
-    Calculates the vertical distance from a linear regression that encompasses a certain number of standard deviations of the sample set being modeling
+    Calculates the vertical distance from a linear regression that 
+    encompasses a certain number of standard deviations of the sample 
+    set being modeling
     
     Note: Only works for linear regression!
     
-    Key portion adapted from http://stackoverflow.com/questions/133897/how-do-you-find-a-point-at-a-given-perpendicular-distance-from-a-line
+    Key portion adapted from http://stackoverflow.com/questions/133897/
+        how-do-you-find-a-point-at-a-given-perpendicular-distance-from-
+        a-line
     
     Inputs
     ------
-    x, y: x and y arrays for the data being modeled
-    sigma: number of standard deviations
+    x, y:   x and y arrays for the data being modeled
+    sigma:  number of standard deviations
     
     Outputs
     -------
-    std_dy: an array of same dimensions as x and y that is the vertical offset from the regression line
-    trend_fn: np.poly1d() object representing the linear regression of the data
+    std_dy:     an array of same dimensions as x and y that is the 
+                vertical offset from the regression line
+    trend_fn:   np.poly1d() object representing the linear regression of
+                 the data
     
     Example Usage
     -------------
     std_dy = calculate_stddev_lines(x, y)
-    plt.scatter(x, y) # data
-    plt.plot(x, trend_fn(y)) # trendline
-    plt.plot(x, trend_fn(y)+std_dy, linestyle='--') # std line upper bound
-    plt.plot(x, trend_fn(y)-std_dy, linestyle='--') # std line lower bound 
+    # data
+    plt.scatter(x, y) 
+    # trendline
+    plt.plot(x, trend_fn(y)) 
+    # std line upper bound
+    plt.plot(x, trend_fn(y)+std_dy, linestyle='--') 
+    # std line lower bound 
+    plt.plot(x, trend_fn(y)-std_dy, linestyle='--') 
     plt.show()
     """
     p = np.polyfit(x, y, 1)
@@ -200,13 +216,13 @@ def calculate_stddev_lines(x, y, sigma=2):
     dstd = distances.std() # standard deviation
     perp_dxdy = sigma * dstd # perpendicular distance from trendline
 
-    ## Adapted from http://stackoverflow.com/questions/133897/how-do-you-find-a-point-at-a-given-perpendicular-distance-from-a-line
     # calculate dy for std
     # Calculate unit vector perpendicular to trendline
     tdist = twod_dist(a, b)
     dx = (a[0] - b[0]) / tdist
     dy = (a[1] - b[1]) / tdist
-    # a point that is the appropriate perpendicular distance away from the beginning of the trendline
+    # a point that is the appropriate perpendicular distance away from 
+    # the beginning of the trendline
     q = [(a[0] + perp_dxdy*dy), (a[1] - perp_dxdy*dx)]
 
     # find the vertical distance from point q to the trendline
@@ -216,37 +232,48 @@ def calculate_stddev_lines(x, y, sigma=2):
 
 def trendline(x, y, poly=1, confint=False, conf=0.95, sigline=False, sigma=2):
     """
-    Returns trendline coordinates and optionally confidence interval and/or lines that encompass standard deviation(s) of the data, and points within and 
-    out of these standard deviation bounds. The standard deviation lines currently only work for linear regressions.
+    Returns trendline coordinates and optionally confidence interval 
+    and/or lines that encompass standard deviation(s) of the data, 
+    and points within and out of these standard deviation bounds. 
+
+    The standard deviation lines currently only work for linear 
+    regressions.
     
-    Confidence intervals show the confidence of the **fit**, whereas the standard deviation lines show the range around the trendline encompassing a certain number of standard deviations around the average data point distance from the trendline
+    Confidence intervals show the confidence of the **fit**, whereas the
+    standard deviation lines show the range around the trendline 
+    encompassing a certain number of standard deviations around the 
+    average data point distance from the trendline
     
     Adapted from:
-    http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get-1-sigma-uncertainty-around-the-estimated-curve
+    http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get
+        -1-sigma-uncertainty-around-the-estimated-curve
     
     Inputs
     ------
-    x: x coordinate data of sample
-    y: y coordinate data of sample
-    poly: degree of polynomial fit
-    confint: True to get bounds for confidence interval **of the trendline**
-    conf: what confidence interval you want 
-    sigline: True to get bounds for lines that encompass standard deviation(s) **of the data**
-    sigma: how many standard deviations of error to return
+    x:          x coordinate data of sample
+    y:          y coordinate data of sample
+    poly:       degree of polynomial fit
+    confint:    True to get bounds for confidence interval **of the 
+                trendline**
+    conf:       what confidence interval you want 
+    sigline:    True to get bounds for lines that encompass standard 
+                deviation(s) **of the data**
+    sigma:      how many standard deviations of error to return
     
     Outputs
     -------
-    x: sorted x values from sample data
-    trend_fn: numpy.poly1d function of the trendline
-    sigma_y_fit: error of y_fit; returned when err==True
-    within_bounds: 2D array of [x] and [y] arrays corresponding to data that fall 
-                    within the error bounds
-    outof_bounds: 2D array of [x] and [y] arrays corresponding to data that fall 
-                    outside of the error bounds
+    x:              sorted x values from sample data
+    trend_fn:       numpy.poly1d function of the trendline
+    sigma_y_fit:    error of y_fit; returned when err==True
+    within_bounds:  2D array of [x] and [y] arrays corresponding to data
+                    that fall within the error bounds
+    outof_bounds:   2D array of [x] and [y] arrays corresponding to data
+                    that fall outside of the error bounds
     
     Example Usage (linear regression with all bells and whistles)
     -------------
-    xfit, trend_fn, conf_dy, sig_dy, within, without = trendline(x,y, ci=True, pi=True, sigma=2)
+    xfit, trend_fn, conf_dy, sig_dy, within, without = trendline(x,y, \
+    ci=True, pi=True, sigma=2)
     # plot trendline
     plt.plot(xfit, trend_fn(xfit), color='k') 
 
@@ -259,11 +286,14 @@ def trendline(x, y, poly=1, confint=False, conf=0.95, sigline=False, sigma=2):
     plt.plot(xfit, trend_fn(xfit)+sig_dy, color='r', linestyle='--') 
     
     # plot data points that fall within or out of the range
-    plt.plot(within[0], within[1], color='lightskyblue', marker='o', linestyle='') # data points within the range
-    plt.plot(without[0], without[1], color='coral', marker='o', linestyle='') # data points out of the range
+    plt.plot(within[0], within[1], color='lightskyblue', marker='o',
+            linestyle='') # data points within the range
+    plt.plot(without[0], without[1], color='coral', marker='o', 
+            linestyle='') # data points out of the range
 
     ToDo:
-    [ ] Add ability to calculate stddev lines for higher order polynomial fits
+    [ ] Add ability to calculate stddev lines for higher order 
+        polynomial fits
     """
     # sort the data by x dimension
     sorted_idx = np.argsort(x)
@@ -288,7 +318,8 @@ def trendline(x, y, poly=1, confint=False, conf=0.95, sigline=False, sigma=2):
         tstat = t.ppf(conf, n-1) # find appropriate t value
         s_err = np.sum(np.power(y_err,2)) # sum of the squares of the residuals
 
-        conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + (np.power((x-mean_x),2)/
+        conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + \
+                (np.power((x-mean_x),2)/
                 ((np.sum(np.power(x,2)))-n*(np.power(mean_x,2))))))
     if not sigline:
         return x, trend_fn, conf_dy
