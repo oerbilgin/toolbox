@@ -46,7 +46,7 @@ Calculates the linear regression of a 2D dataset, and gives you the vertical dis
 ### `trendline()`
 Calculates a polynomial fit, optionally gives you confidence intervals for the polynomial, optionally calls calculate_stddev_lines(), as long as you're just doing a linear regression
 
-[trendline example Notebook](https://github.com/oerbilgin/toolbox/blob/master/exammple_notebooks/linear_regression.ipynb)
+[trendline example Notebook](https://github.com/oerbilgin/toolbox/blob/master/example_notebooks/linear_regression.ipynb)
 
 ![trendline example](https://github.com/oerbilgin/toolbox/blob/master/images/linreg.png)
 
