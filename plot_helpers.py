@@ -68,10 +68,16 @@ def subplot_row_col(n_plots, n_cols=5):
         n_rows = int(a + 1)
     else: n_rows = int(a)
     return n_rows
-def trendline(x, y, poly=1, err=False, sigma=2):
+def trendline(x, y, poly=1, CI=False, PI=False, sigma=2):
     """
-    Returns trendline coordinates and optionally error and points within and 
-    out of error bounds
+    Returns trendline coordinates and optionally Confidence Interval (CI) 
+    and/or Prediction Interval (PI) and points within and out of CI or PI
+
+    From Wikipedia:
+    prediction intervals predict the distribution of individual future points, 
+    whereas confidence intervals and credible intervals of parameters predict 
+    the distribution of estimates of the true population mean or other quantity
+    of interest that cannot be observed
     
     Adapted from:
     http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get-1-sigma-uncertainty-around-the-estimated-curve
@@ -178,6 +184,32 @@ def calc_perp(A, B, C):
     Dy = Ay + t*(By-Ay)
     return [Dx, Dy]
 
+def twod_dist(a, b):
+    """
+    Calculates the distance between two points in 2-dimensional space
+
+    Inputs
+    ------
+    a, b: [x,y] coordinates for the two points; can be list or tuple
+
+    Outputs
+    -------
+    dist: distance
+    """
+    try:
+        if len(a) != 2 or len(b) != 2:
+            raise RuntimeError('Too many values in one or both inputs')
+    except TypeError:
+        raise RuntimeError('The inputs must be [x,y] coordinates')
+    
+    a = [float(x) for x in a]
+    b = [float(x) for x in b]
+    
+    dist = np.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
+    
+    return dist
+
+
 def elbow_point(x_vals, y_vals):
     """
     calculates the elbow point of a plot by finding the point furthest from the
@@ -204,7 +236,7 @@ def elbow_point(x_vals, y_vals):
     for i, y in enumerate(y_vals):
         C = [x_vals[i], y]
         D = calc_perp(A, B, C)
-        dist = math.hypot(D[0] - C[0], D[1] - C[1])
+        dist = twod_dist(C, D)
         if dist > maxdist:
             maxdist = dist
             elbow_idx = i
