@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
-from scipy.stats import linregress
-import math
+from scipy.stats import t
 
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
@@ -68,94 +67,6 @@ def subplot_row_col(n_plots, n_cols=5):
         n_rows = int(a + 1)
     else: n_rows = int(a)
     return n_rows
-def trendline(x, y, poly=1, CI=False, PI=False, sigma=2):
-    """
-    Returns trendline coordinates and optionally Confidence Interval (CI) 
-    and/or Prediction Interval (PI) and points within and out of CI or PI
-
-    From Wikipedia:
-    prediction intervals predict the distribution of individual future points, 
-    whereas confidence intervals and credible intervals of parameters predict 
-    the distribution of estimates of the true population mean or other quantity
-    of interest that cannot be observed
-    
-    Adapted from:
-    http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get-1-sigma-uncertainty-around-the-estimated-curve
-    
-    Inputs
-    ------
-    x: x coordinate data of sample
-    y: y coordinate data of sample
-    poly: degree of polynomial fit
-    err: False to just get x_fit and y_fit coordinates; True to get error bound
-    sigma: corresponds to confidence interval:
-        2= 95% CI
-        3= 99% CI
-    
-    Outputs
-    -------
-    x: sorted x values from sample data
-    trend_fn: numpy.poly1d function of the trendline
-    sigma_y_fit: error of y_fit; returned when err==True
-    within_bounds: 2D array of [x] and [y] arrays corresponding to data that 
-                    fall within the error bounds
-    outof_bounds: 2D array of [x] and [y] arrays corresponding to data that 
-                    fall outside of the error bounds
-    
-    Example Usage (linear regression)
-    ---------------------------------
-    x = np.array([4.0,2.5,3.2,5.8,7.4,4.4,8.3,8.5])
-    y = np.array([2.1,4.0,1.5,6.3,5.0,5.8,8.1,7.1])
-    xfit, trend_fn, err, within, without = trendline(x,y, err=True)
-    fig, ax = plt.subplots()
-    # data points within error
-    ax.plot(within[0], within[1], color='lightskyblue', marker='o', 
-            linestyle='') 
-    # data points within error
-    ax.plot(without[0], without[1], color='coral', marker='o', linestyle='') 
-    # linear regression
-    ax.plot(xfit, trend_fn(xfit), color='k') 
-    # + 2sigma
-    ax.plot(xfit, trend_fn(xfit)+err, color='k', linestyle='--') 
-    # - 2sigma
-    ax.plot(xfit, trend_fn(xfit)-err, color='k', linestyle='--') 
-    """
-    # sort the data by x dimension
-    sorted_idx = np.argsort(x)
-    x = x[sorted_idx]
-    y = y[sorted_idx]
-    
-    # calculate the trendline
-    p, cov = np.polyfit(x, y, poly, cov=True)
-    trend_fn = np.poly1d(p)
-    
-    if not err:
-        return x, trend_fn
-    else:
-        ## this is copied almost directly from the SO post
-        TT = np.vstack([x**(poly-i) for i in range(poly+1)]).T
-        # matrix multiplication calculates the polynomial values
-        y_fit = np.dot(TT, p)
-        # C_y = TT*C_z*TT.T
-        cov_y_fit = np.dot(TT, np.dot(cov, TT.T)) 
-        # Standard deviations are sqrt of diagonal
-        sigma_y_fit = np.sqrt(np.diag(cov_y_fit)) * sigma 
-        ##
-        
-        # determine which data points are in or out of bounds
-        within_bounds = []
-        outof_bounds = []
-        for i, xval in enumerate(x):
-            if (y[i] > trend_fn(xval) - sigma_y_fit[i]) and \
-                y[i] < (trend_fn(xval) + sigma_y_fit[i]):
-                within_bounds.append([xval, y[i]])
-            else:
-                outof_bounds.append([xval, y[i]])
-                
-        # transform the arrays
-        within_bounds = np.asarray(within_bounds).T
-        outof_bounds = np.asarray(outof_bounds).T
-        return x, trend_fn, sigma_y_fit, within_bounds, outof_bounds
 
 def calc_perp(A, B, C):
     """
@@ -241,3 +152,168 @@ def elbow_point(x_vals, y_vals):
             maxdist = dist
             elbow_idx = i
     return elbow_idx
+
+def calculate_stddev_lines(x, y, sigma=2):
+    """
+    Calculates the vertical distance from a linear regression that encompasses a certain number of standard deviations of the sample set being modeling
+    
+    Note: Only works for linear regression!
+    
+    Key portion adapted from http://stackoverflow.com/questions/133897/how-do-you-find-a-point-at-a-given-perpendicular-distance-from-a-line
+    
+    Inputs
+    ------
+    x, y: x and y arrays for the data being modeled
+    sigma: number of standard deviations
+    
+    Outputs
+    -------
+    std_dy: an array of same dimensions as x and y that is the vertical offset from the regression line
+    trend_fn: np.poly1d() object representing the linear regression of the data
+    
+    Example Usage
+    -------------
+    std_dy = calculate_stddev_lines(x, y)
+    plt.scatter(x, y) # data
+    plt.plot(x, trend_fn(y)) # trendline
+    plt.plot(x, trend_fn(y)+std_dy, linestyle='--') # std line upper bound
+    plt.plot(x, trend_fn(y)-std_dy, linestyle='--') # std line lower bound 
+    plt.show()
+    """
+    p = np.polyfit(x, y, 1)
+    trend_fn = np.poly1d(p)
+    
+    minidx = np.where(x == x.min())
+    maxidx = np.where(x == x.max())
+    minx = x[minidx][0]
+    maxx = x[maxidx][0]
+    a = [minx, trend_fn(minx)] # trendline low-left
+    b = [maxx, trend_fn(maxx)] # trendline upper-right
+
+    distances=[]
+    for i, xval in enumerate(x):
+        c = [xval, y[i]]
+        d = calc_perp(a, b, c)
+        distances.append(twod_dist(c, d))
+    distances=np.asarray(distances)
+    davg = distances.mean() # mean distance from points to trendline
+    dstd = distances.std() # standard deviation
+    perp_dxdy = sigma * dstd # perpendicular distance from trendline
+
+    ## Adapted from http://stackoverflow.com/questions/133897/how-do-you-find-a-point-at-a-given-perpendicular-distance-from-a-line
+    # calculate dy for std
+    # Calculate unit vector perpendicular to trendline
+    tdist = twod_dist(a, b)
+    dx = (a[0] - b[0]) / tdist
+    dy = (a[1] - b[1]) / tdist
+    # a point that is the appropriate perpendicular distance away from the beginning of the trendline
+    q = [(a[0] + perp_dxdy*dy), (a[1] - perp_dxdy*dx)]
+
+    # find the vertical distance from point q to the trendline
+    std_dy = abs(q[1] - trend_fn(q[0]))
+    
+    return std_dy, trend_fn
+
+def trendline(x, y, poly=1, confint=False, conf=0.95, sigline=False, sigma=2):
+    """
+    Returns trendline coordinates and optionally confidence interval and/or lines that encompass standard deviation(s) of the data, and points within and 
+    out of these standard deviation bounds. The standard deviation lines currently only work for linear regressions.
+    
+    Confidence intervals show the confidence of the **fit**, whereas the standard deviation lines show the range around the trendline encompassing a certain number of standard deviations around the average data point distance from the trendline
+    
+    Adapted from:
+    http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get-1-sigma-uncertainty-around-the-estimated-curve
+    
+    Inputs
+    ------
+    x: x coordinate data of sample
+    y: y coordinate data of sample
+    poly: degree of polynomial fit
+    confint: True to get bounds for confidence interval **of the trendline**
+    conf: what confidence interval you want 
+    sigline: True to get bounds for lines that encompass standard deviation(s) **of the data**
+    sigma: how many standard deviations of error to return
+    
+    Outputs
+    -------
+    x: sorted x values from sample data
+    trend_fn: numpy.poly1d function of the trendline
+    sigma_y_fit: error of y_fit; returned when err==True
+    within_bounds: 2D array of [x] and [y] arrays corresponding to data that fall 
+                    within the error bounds
+    outof_bounds: 2D array of [x] and [y] arrays corresponding to data that fall 
+                    outside of the error bounds
+    
+    Example Usage (linear regression with all bells and whistles)
+    -------------
+    xfit, trend_fn, conf_dy, sig_dy, within, without = trendline(x,y, ci=True, pi=True, sigma=2)
+    # plot trendline
+    plt.plot(xfit, trend_fn(xfit), color='k') 
+
+    # Plot confidence intervals of fit
+    plt.plot(xfit, trend_fn(xfit)+conf_dy, color='k', linestyle='--') 
+    plt.plot(xfit, trend_fn(xfit)-conf_dy, color='k', linestyle='--') 
+
+    # Plot lines that encompass ~ 95% of data
+    plt.plot(xfit, trend_fn(xfit)-sig_dy, color='r', linestyle='--')
+    plt.plot(xfit, trend_fn(xfit)+sig_dy, color='r', linestyle='--') 
+    
+    # plot data points that fall within or out of the range
+    plt.plot(within[0], within[1], color='lightskyblue', marker='o', linestyle='') # data points within the range
+    plt.plot(without[0], without[1], color='coral', marker='o', linestyle='') # data points out of the range
+
+    ToDo:
+    [ ] Add ability to calculate stddev lines for higher order polynomial fits
+    """
+    # sort the data by x dimension
+    sorted_idx = np.argsort(x)
+    x = x[sorted_idx]
+    y = y[sorted_idx]
+    
+    # calculate the trendline
+    p = np.polyfit(x, y, poly)
+    trend_fn = np.poly1d(p)
+    
+    if not confint and not sigline:
+        return x, trend_fn
+    else:
+        ## copied almost directly from 
+        ## https://github.com/KirstieJane/STATISTICS/blob/master/CIs_LinearRegression.py
+        # Calculate error of fit
+        y_err = y - trend_fn(x)
+        
+        # Calculate the confidence interval
+        mean_x = np.mean(x) # mean of x
+        n = len(x) # number of samples in original fit
+        tstat = t.ppf(conf, n-1) # find appropriate t value
+        s_err = np.sum(np.power(y_err,2)) # sum of the squares of the residuals
+
+        conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + (np.power((x-mean_x),2)/
+                ((np.sum(np.power(x,2)))-n*(np.power(mean_x,2))))))
+    if not sigline:
+        return x, trend_fn, conf_dy
+    elif poly == 1:
+        # Calculate dy from curve that encompasses n*sigma of data points
+        # Calculate distance of each datapoint from the fit curve
+        sig_dy, _ = calculate_stddev_lines(x, y, sigma=sigma)
+            
+        # Determine which data points are in or out of bounds
+        within_bounds = []
+        outof_bounds = []
+        for i, xval in enumerate(x):
+            if (y[i] > trend_fn(xval) - sig_dy) and \
+                y[i] < (trend_fn(xval) + sig_dy):
+                within_bounds.append([xval, y[i]])
+            else:
+                outof_bounds.append([xval, y[i]])
+                
+        # transform the arrays
+        within_bounds = np.asarray(within_bounds).T
+        outof_bounds = np.asarray(outof_bounds).T
+        
+        if confint and sigline:
+            return x, trend_fn, conf_dy, sig_dy, within_bounds, outof_bounds
+        else:
+            return x, trend_fn, sig_dy, within_bounds, outof_bounds
+    else:
+        raise RuntimeError('Currently cannot calculate population stdev lines for anything other than linear regression, sorry')
