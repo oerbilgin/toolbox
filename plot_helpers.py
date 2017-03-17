@@ -212,7 +212,7 @@ def trendline(x, y, poly=1, confint=False, conf=0.95):
     p = np.polyfit(x, y, poly)
     trend_fn = np.poly1d(p)
     
-    if not confint and not sigline:
+    if not confint:
         return x, trend_fn
     else:
         ## copied almost directly from 
