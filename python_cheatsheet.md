@@ -1,4 +1,14 @@
 # Python Cheatsheet
+## Pandas
+### String methods reminders
+* Useful options are `case=False` and `regex=False`. Turning regex off is sometimes critical to avoid errors, but then you can't search for multiple patterns using `contains()`.
+
+* **.str.contains()** 
+	* uses '**|**' operator in between patterns as an `OR` statement, only works if `regex=False`
+	* I do not know of a way to do an `AND` statement within the function
+* **.str.startswith()** and **.str.endswith()**
+	* Both of them use **tuples** to separate patterns with an OR statement
+
 ## Argument Parsing
 ```python
 import argparse
@@ -14,7 +24,7 @@ args.level
 args.mute
 ```
 ## Multiprocessing
-This opens a numver of python processes, which on some systems can cause memory issues because it *appears* that the amount of memory used has increased by the number of processes open.
+This opens a number of python processes, which on some systems can cause memory issues because it *appears* that the amount of memory used has increased by the number of processes open.
 I'm sure there's a way to work around this.
 ```python
 import multiprocessing as mp
