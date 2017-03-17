@@ -226,8 +226,9 @@ def trendline(x, y, poly=1, confint=False, conf=0.95):
         tstat = t.ppf(conf, n-1) # find appropriate t value
         s_err = np.sum(np.power(y_err,2)) # sum of the squares of the residuals
 
-        conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + (np.power((x-mean_x),2)/
-                ((np.sum(np.power(x,2)))-n*(np.power(mean_x,2))))))
+        conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + \
+                    (np.power((x-mean_x),2)/
+                    ((np.sum(np.power(x,2)))-n*(np.power(mean_x,2))))))
         return x, trend_fn, conf_dy
 
 def multivar_ellipse(x,y, sigma=2, 
@@ -286,11 +287,18 @@ def multivar_ellipse(x,y, sigma=2,
     
     return ell, within_bounds, outof_bounds
 
-def calculate_stddev_lines_deprecated(x, y, sigma=2):
+def stddev_from_trendline(x, y, sigma=4):
     """
-    Calculates the vertical distance from a linear regression that 
+    Calculates the distance from a linear regression that 
     encompasses a certain number of standard deviations of the sample 
     set being modeling
+    
+    First calculates the perpendicular distance of each data point to 
+    the linear regression. Then calculates the standard deviation of 
+    these distances, and multiplies by the given value sigma. Then
+    calculates the vertical offset from the trendline corresponding to a
+    line parallel to the trendline that is the standard deviation times 
+    sigma perpendicular distance away.
     
     Note: Only works for linear regression!
     
@@ -305,34 +313,43 @@ def calculate_stddev_lines_deprecated(x, y, sigma=2):
     
     Outputs
     -------
-    std_dy:     an array of same dimensions as x and y that is the 
-                vertical offset from the regression line
+    std_dy:     the vertical offset from the regression line 
+                corresponding to the number of standard deviations away 
+                from the linear regression
     trend_fn:   np.poly1d() object representing the linear regression of
-                 the data
+                the data
     
     Example Usage
     -------------
-    std_dy = calculate_stddev_lines(x, y)
+    dy, trend_fn = stddev_from_trendline(x, y)
     # data
     plt.scatter(x, y) 
     # trendline
-    plt.plot(x, trend_fn(y)) 
+    plt.plot(x, trend_fn(x)) 
     # std line upper bound
-    plt.plot(x, trend_fn(y)+std_dy, linestyle='--') 
+    plt.plot(x, trend_fn(x)+dy, linestyle='--') 
     # std line lower bound 
-    plt.plot(x, trend_fn(y)-std_dy, linestyle='--') 
-    plt.show()
+    plt.plot(x, trend_fn(x)-dy, linestyle='--') 
+
+    # find lines that are outside this range
+    idx_dwn = np.where(y < trend_fn(x)-dy)[0]
+    idx_up = np.where(y > trend_fn(x)+dy)[0]
+    idx = np.concatenate((idx_dwn, idx_up))
+    outside_x = x[idx]
+    outside_y = y[idx]
+
+    #plot them
+    plt.scatter(outside_x, outside_y, s=100, color='', edgecolors='k')
     """
     p = np.polyfit(x, y, 1)
     trend_fn = np.poly1d(p)
     
-    minidx = np.where(x == x.min())
-    maxidx = np.where(x == x.max())
+    minidx = np.where(x == x.min())[0]
+    maxidx = np.where(x == x.max())[0]
     minx = x[minidx][0]
     maxx = x[maxidx][0]
     a = [minx, trend_fn(minx)] # trendline low-left
     b = [maxx, trend_fn(maxx)] # trendline upper-right
-
     distances=[]
     for i, xval in enumerate(x):
         c = [xval, y[i]]
@@ -341,6 +358,8 @@ def calculate_stddev_lines_deprecated(x, y, sigma=2):
     distances=np.asarray(distances)
     davg = distances.mean() # mean distance from points to trendline
     dstd = distances.std() # standard deviation
+    
+    # return dy for given sigma for plotting a line
     perp_dxdy = sigma * dstd # perpendicular distance from trendline
 
     # calculate dy for std
@@ -357,7 +376,8 @@ def calculate_stddev_lines_deprecated(x, y, sigma=2):
     
     return std_dy, trend_fn
 
-def trendline_deprecated(x, y, poly=1, confint=False, conf=0.95, sigline=False, sigma=2):
+def trendline_deprecated(x, y, poly=1, confint=False, conf=0.95, sigline=False,
+                         sigma=2):
     """
     Returns trendline coordinates and optionally confidence interval 
     and/or lines that encompass standard deviation(s) of the data, 
