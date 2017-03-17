@@ -48,10 +48,16 @@ Finds the elbow point of an elbow plot
 Calculates the linear regression of a 2D dataset, and gives you the vertical distance from the trendline that encompasses n-standard deviations of the data
 
 ### `trendline()`
-Calculates a polynomial fit, optionally gives you confidence intervals for the polynomial, optionally calls calculate_stddev_lines(), as long as you're just doing a linear regression
+Calculates a polynomial fit, optionally gives you confidence intervals for the polynomial
 
 [trendline example Notebook](https://github.com/oerbilgin/toolbox/blob/master/example_notebooks/linear_regression.ipynb)
 
 ![trendline example](https://github.com/oerbilgin/toolbox/blob/master/images/linreg.png)
 
+### `multivar_ellipse()`
+Draws an ellipse around multivariate data that encompasses n-sigma of the data
+
+[ellipse example Notebook](https://github.com/oerbilgin/toolbox/blob/master/example_notebooks/ellipse.ipynb)
+
+![ellipse example](https://github.com/oerbilgin/toolbox/blob/master/images/ellipse.png)
 
