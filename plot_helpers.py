@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from scipy.stats import t
+from matplotlib.patches import Ellipse
 
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
@@ -228,3 +229,238 @@ def trendline(x, y, poly=1, confint=False, conf=0.95):
         conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + (np.power((x-mean_x),2)/
                 ((np.sum(np.power(x,2)))-n*(np.power(mean_x,2))))))
         return x, trend_fn, conf_dy
+
+def multivar_ellipse(x,y, sigma=2, 
+                    ellipse_color='none', 
+                    ellipse_border_color='black', 
+                    ellipse_linestyle='--', 
+                    ellipse_hatch=''):
+    """
+    Given x and y data, returns an ellipse patch and the points in and 
+    out of the ellipse
+    
+    Adapted from http://stackoverflow.com/questions/20126061/creating-a-
+    confidence-ellipses-in-a-sccatterplot-using-matplotlib
+    
+    Inputs
+    ------
+    x,y: x and y data
+    sigma: number of standard deviations of data to encompass
+    ellipse_color: face color of ellipse patch
+    ellipse_border: border color of ellipse patch
+    
+    Outputs
+    -------
+    
+    """
+    def eigsorted(cov):
+        vals, vecs = np.linalg.eigh(cov)
+        order = vals.argsort()[::-1]
+        return vals[order], vecs[:,order]
+
+    cov = np.cov(x, y)
+    vals, vecs = eigsorted(cov)
+    
+    theta = np.degrees(np.arctan2(*vecs[:,0][::-1]))
+    
+    w, h = 2 * sigma * np.sqrt(vals)
+    
+    ell = Ellipse(xy=(np.mean(x), np.mean(y)),
+                  width=w, height=h,
+                  angle=theta, color=ellipse_border_color,
+                  linestyle=ellipse_linestyle, hatch=ellipse_hatch)
+    ell.set_facecolor(ellipse_color)
+
+    within_bounds = []
+    outof_bounds = []
+    for i, xval in enumerate(x):
+        if ell.contains_point([xval, y[i]]):
+            within_bounds.append([xval, y[i]])
+        else:
+            outof_bounds.append([xval, y[i]])
+    
+    # Transform into 2xN array, where each array is the x or y coords
+    # For easier plotting
+    within_bounds = np.asarray(within_bounds).T
+    outof_bounds = np.asarray(outof_bounds).T
+    
+    return ell, within_bounds, outof_bounds
+
+def calculate_stddev_lines_deprecated(x, y, sigma=2):
+    """
+    Calculates the vertical distance from a linear regression that 
+    encompasses a certain number of standard deviations of the sample 
+    set being modeling
+    
+    Note: Only works for linear regression!
+    
+    Key portion adapted from http://stackoverflow.com/questions/133897/
+        how-do-you-find-a-point-at-a-given-perpendicular-distance-from-
+        a-line
+    
+    Inputs
+    ------
+    x, y:   x and y arrays for the data being modeled
+    sigma:  number of standard deviations
+    
+    Outputs
+    -------
+    std_dy:     an array of same dimensions as x and y that is the 
+                vertical offset from the regression line
+    trend_fn:   np.poly1d() object representing the linear regression of
+                 the data
+    
+    Example Usage
+    -------------
+    std_dy = calculate_stddev_lines(x, y)
+    # data
+    plt.scatter(x, y) 
+    # trendline
+    plt.plot(x, trend_fn(y)) 
+    # std line upper bound
+    plt.plot(x, trend_fn(y)+std_dy, linestyle='--') 
+    # std line lower bound 
+    plt.plot(x, trend_fn(y)-std_dy, linestyle='--') 
+    plt.show()
+    """
+    p = np.polyfit(x, y, 1)
+    trend_fn = np.poly1d(p)
+    
+    minidx = np.where(x == x.min())
+    maxidx = np.where(x == x.max())
+    minx = x[minidx][0]
+    maxx = x[maxidx][0]
+    a = [minx, trend_fn(minx)] # trendline low-left
+    b = [maxx, trend_fn(maxx)] # trendline upper-right
+
+    distances=[]
+    for i, xval in enumerate(x):
+        c = [xval, y[i]]
+        d = calc_perp(a, b, c)
+        distances.append(twod_dist(c, d))
+    distances=np.asarray(distances)
+    davg = distances.mean() # mean distance from points to trendline
+    dstd = distances.std() # standard deviation
+    perp_dxdy = sigma * dstd # perpendicular distance from trendline
+
+    # calculate dy for std
+    # Calculate unit vector perpendicular to trendline
+    tdist = twod_dist(a, b)
+    dx = (a[0] - b[0]) / tdist
+    dy = (a[1] - b[1]) / tdist
+    # a point that is the appropriate perpendicular distance away from 
+    # the beginning of the trendline
+    q = [(a[0] + perp_dxdy*dy), (a[1] - perp_dxdy*dx)]
+
+    # find the vertical distance from point q to the trendline
+    std_dy = abs(q[1] - trend_fn(q[0]))
+    
+    return std_dy, trend_fn
+
+def trendline_deprecated(x, y, poly=1, confint=False, conf=0.95, sigline=False, sigma=2):
+    """
+    Returns trendline coordinates and optionally confidence interval 
+    and/or lines that encompass standard deviation(s) of the data, 
+    and points within and out of these standard deviation bounds. 
+
+    The standard deviation lines currently only work for linear 
+    regressions.
+    
+    Confidence intervals show the confidence of the **fit**, whereas the
+    standard deviation lines show the range around the trendline 
+    encompassing a certain number of standard deviations around the 
+    average data point distance from the trendline
+    
+    Adapted from:
+    http://stackoverflow.com/questions/28505008/numpy-polyfit-how-to-get
+        -1-sigma-uncertainty-around-the-estimated-curve
+    
+    Inputs
+    ------
+    x:          x coordinate data of sample
+    y:          y coordinate data of sample
+    poly:       degree of polynomial fit
+    confint:    True to get bounds for confidence interval **of the 
+                trendline**
+    conf:       what confidence interval you want 
+    sigline:    True to get bounds for lines that encompass standard 
+                deviation(s) **of the data**
+    sigma:      how many standard deviations of error to return
+    
+    Outputs
+    -------
+    x:              sorted x values from sample data
+    trend_fn:       numpy.poly1d function of the trendline
+    sigma_y_fit:    error of y_fit; returned when err==True
+    within_bounds:  2D array of [x] and [y] arrays corresponding to data
+                    that fall within the error bounds
+    outof_bounds:   2D array of [x] and [y] arrays corresponding to data
+                    that fall outside of the error bounds
+    
+    Example Usage (linear regression with all bells and whistles)
+    -------------
+    xfit, trend_fn, conf_dy = trendline(x, y, confint=True, conf=2)
+    
+    # plot data
+    plt.scatter(x, y, c='lightskyblue')
+
+    # plot trendline
+    plt.plot(xfit, trend_fn(xfit), color='k') 
+
+    # Plot confidence intervals of fit
+    plt.plot(xfit, trend_fn(xfit)+conf_dy, color='k', linestyle='--') 
+    plt.plot(xfit, trend_fn(xfit)-conf_dy, color='k', linestyle='--') 
+    """
+    # sort the data by x dimension
+    sorted_idx = np.argsort(x)
+    x = x[sorted_idx]
+    y = y[sorted_idx]
+    
+    # calculate the trendline
+    p = np.polyfit(x, y, poly)
+    trend_fn = np.poly1d(p)
+    
+    if not confint and not sigline:
+        return x, trend_fn
+    else:
+        ## copied almost directly from 
+        ## https://github.com/KirstieJane/STATISTICS/blob/master/CIs_LinearRegression.py
+        # Calculate error of fit
+        y_err = y - trend_fn(x)
+        
+        # Calculate the confidence interval
+        mean_x = np.mean(x) # mean of x
+        n = len(x) # number of samples in original fit
+        tstat = t.ppf(conf, n-1) # find appropriate t value
+        s_err = np.sum(np.power(y_err,2)) # sum of the squares of the residuals
+
+        conf_dy = tstat * np.sqrt((s_err/(n-2))*(1.0/n + \
+                (np.power((x-mean_x),2)/
+                ((np.sum(np.power(x,2)))-n*(np.power(mean_x,2))))))
+    if not sigline:
+        return x, trend_fn, conf_dy
+    elif poly == 1:
+        # Calculate dy from curve that encompasses n*sigma of data points
+        # Calculate distance of each datapoint from the fit curve
+        sig_dy, _ = calculate_stddev_lines(x, y, sigma=sigma)
+            
+        # Determine which data points are in or out of bounds
+        within_bounds = []
+        outof_bounds = []
+        for i, xval in enumerate(x):
+            if (y[i] > trend_fn(xval) - sig_dy) and \
+                y[i] < (trend_fn(xval) + sig_dy):
+                within_bounds.append([xval, y[i]])
+            else:
+                outof_bounds.append([xval, y[i]])
+                
+        # transform the arrays
+        within_bounds = np.asarray(within_bounds).T
+        outof_bounds = np.asarray(outof_bounds).T
+        
+        if confint and sigline:
+            return x, trend_fn, conf_dy, sig_dy, within_bounds, outof_bounds
+        else:
+            return x, trend_fn, sig_dy, within_bounds, outof_bounds
+    else:
+        raise RuntimeError('Currently cannot calculate population stdev lines for anything other than linear regression, sorry')
