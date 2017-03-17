@@ -40,7 +40,7 @@ def cmap_color(curve_idx, n_curves, color_map='viridis'):
                          'gist_rainbow', 'hsv', 'flag', 'prism'])]
 
     """
-    cmap = plt.get_cmap('viridis')
+    cmap = plt.get_cmap(color_map)
     c_norm = colors.Normalize(vmin=0, vmax=range(n_curves)[-1])
     scalar_map = cmx.ScalarMappable(norm=c_norm, cmap=cmap)
     color = scalar_map.to_rgba(curve_idx)

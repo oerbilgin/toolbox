@@ -26,7 +26,10 @@ Uses MetAtlas database to get a compound object from an InChI-key
 
 ## Matplotlib helpers
 ### `cmap_color()`
-Makes using color maps easy
+Color maps one liner
+[cmap example Notebook](https://github.com/oerbilgin/toolbox/blob/master/example_notebooks/cmap.ipynb)
+
+![cmap example](https://github.com/oerbilgin/toolbox/blob/master/images/cmap.png)
 
 ### `subplot_row_col()`
 Makes plotting lots of subplots easy
