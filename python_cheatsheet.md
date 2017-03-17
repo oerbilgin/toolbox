@@ -4,7 +4,7 @@
 * Useful options are `case=False` and `regex=False`. Turning regex off is sometimes critical to avoid errors, but then you can't search for multiple patterns using `contains()`.
 
 * **.str.contains()** 
-	* uses '**|**' operator in between patterns as an `OR` statement, only works if `regex=False`
+	* uses '**|**' operator in between patterns as an `OR` statement, only works if `regex=True`
 	* I do not know of a way to do an `AND` statement within the function
 * **.str.startswith()** and **.str.endswith()**
 	* Both of them use **tuples** to separate patterns with an OR statement
