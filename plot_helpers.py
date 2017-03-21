@@ -8,7 +8,24 @@ from matplotlib.patches import Ellipse
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
     returns the suitable color from the given color map for the plot 
-    number
+    number. Meant for use when plotting multiple curves or scatters in
+    an iterative loop. 
+
+    Example Usage:
+    --------------
+    data = [list of dicts corresponding to x and y coordinates]
+    for i, subdata in enumerate(data):
+        plt.plot(subdata['x'], subdata['y'], 
+                 color=cmap_color(i, len(data)))
+        OR:
+        plt.scatter(subdata['x'], subdata['y'], 
+                    color=cmap_color(i, len(data)))
+
+    If you instead want to have color map plotting within one data
+    series, plt.scatter() has its own color map functionality for this:
+    x = [0,1,2,3,4],
+    y = [0,1,2,3,4]}
+    plt.scatter(x, y, c=range(len(x)), cmap='viridis')
     
     Inputs
     ------
