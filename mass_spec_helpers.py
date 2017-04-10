@@ -55,6 +55,34 @@ def ppm_window(mass, ppm=5, result='bounds'):
             '%s is not a valid result argument' %(result)
             )
 
+def accurate_mass_match(mass, compound_df=None, ppm=5, extract='inchi_key'):
+    """
+    Accurate mass searching against a compound database.
+
+    Inputs
+    ------
+    mass:           An accurate monoisotopic mass
+    compound_df:    A dataframe of compounds. Must have a column named
+                    "mono_isotopic_molecular_weight"
+    ppm:            ppm error to allow the mass matcher
+    extract:        What compound information to return. Must correspond
+                    to a valid column in compound_df
+    
+    Outputs
+    -------
+    cpd:            List of compounds that were matched
+    """
+
+    err = ppm_window(mass, ppm=ppm, result='error')
+
+    potential_compounds = compound_df[
+                            abs(compound_df['mono_isotopic_molecular_weight'] \
+                            - mass) <= err]
+    cpds = potential_compounds[extract].values.tolist()
+    if len(cpds) == 0:
+        cpds = None
+    return cpds
+
 def find_mass(target_weight, ppm, df, 
     mz_column_name='mz', rt_column_name='rt_peak', rt=None, rt_bound=0.05):
     """
