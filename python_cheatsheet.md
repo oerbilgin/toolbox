@@ -64,13 +64,13 @@ ax2.plot(x, y)
 ```
 
 ### Basic legend stuff
-This will place the legend box outside the plot, with the upper left corner of the plot just to the right of the upper right corner of the plot
+* This will place the legend box outside the plot, with the upper left corner of the plot just to the right of the upper right corner of the plot
 ```python
 ax1.legend(loc='upper left', bbox_to_anchor=(1.1, 1.))
 ```
 The `loc` argument says how to orient the `bbox_to_anchor`, and bbox_to_anchor is in units of x and y axes positions: (0,0) is bottom left, (1,1) it top right
 
-This will make a legend most useful for bar charts
+* This will make a legend most useful for bar charts
 ```python
 import matplotlib.patches as mpatches
 handle_list = []
@@ -79,6 +79,7 @@ for i, label in enumerate(['control', 'sample_1', 'sample_2']):
     patch = mpatches.Patch(color=sample_colors[i], label=label)
     handle_list.append(patch)
 ax.legend(handles=handle_list, loc='lower left', bbox_to_anchor=(-1., 0))
+```
 
 ### Setting figure size
 ```python
