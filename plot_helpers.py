@@ -4,6 +4,7 @@ import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from scipy.stats import t
 from matplotlib.patches import Ellipse
+import matplotlib.patches as mpatches
 
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
