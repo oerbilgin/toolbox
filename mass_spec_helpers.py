@@ -23,7 +23,7 @@ def ppm_error(mass, theoretical_mass):
         else:
             theoretical_mass = Descriptors.ExactMolWt(theoretical_mass)
     ppm = (mass - theoretical_mass) / theoretical_mass * 1e6
-    return ppm
+    return abs(ppm)
 
 def ppm_window(mass, ppm=5, result='bounds'):
     """
