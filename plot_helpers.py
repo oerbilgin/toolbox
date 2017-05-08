@@ -6,6 +6,51 @@ from scipy.stats import t
 from matplotlib.patches import Ellipse
 import matplotlib.patches as mpatches
 
+def hist_silhouette(hist_obj, ignore_zero=True):
+    """
+    Takes in a matplotlib plt.hist() or numpy.histogram() output 
+    and returns x and y lists corresponding to a line connecting the 
+    tops of the bins
+    
+    plt.hist() should return a tuple where:
+    0: array of bin heights
+    1: array of bin edges
+    2: matplotlib patches
+
+    numpy.histogram() returns a tuple where
+    0: array of bin heights
+    1: array of bin edges
+
+    Inputs
+    ------
+    hist_obj:       tuple where the first element is a list of bin heights,
+                    and the second element is a list of bin edges
+    ignore_zeros:   When true, the output x and y lists do not have
+                    values for histogram bars with a height of 0
+
+    Outputs
+    -------
+    x_list: list of x-coordinates to be plotted, corresponding to the 
+            middle point between two bin edges; the center of the bin bar
+    y)list: list of y-coordinates to be plotted; the height of the bin 
+            bar
+    """
+    counts = hist_obj[0]
+    bin_edges = hist_obj[1]
+    y_list = []
+    x_list = []
+    for i, pt in enumerate(counts):
+        y = pt
+        x = (bin_edges[i+1] + bin_edges[i]) / 2
+        if ignore_zero:
+            if y != 0:
+                y_list.append(y)
+                x_list.append(x)
+        else:
+            y_list.append(y)
+            x_list.append(x)
+    return x_list, y_list
+
 def cmap_color(curve_idx, n_curves, color_map='viridis'):
     """
     returns the suitable color from the given color map for the plot 
