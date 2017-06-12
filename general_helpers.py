@@ -50,5 +50,5 @@ def load_dataframe(fname, filetype=None, key=None):
             make it a csv, tab, or pickle file')
 
     # remove rows that are empty
-    df = df[~pd.isnull(df).all(axis=1)]
+    df = df[pd.notnull(df).all(axis=1)]
     return df
