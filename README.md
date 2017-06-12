@@ -1,6 +1,12 @@
 # toolbox
 Helpful python functions aggregated into one place
 
+## General helpers
+* Functions that I tend to use a lot to make life easier
+
+### `load_dataframe()`
+Infers what Pandas dataframe loader to use based on the file extension (or you can override), and returns the loaded dataframe.
+
 ## Mass Spectrometry helpers
 * MetAtlas is an import, but is not required for most functions
 * rdkit is an import, but is currently not required for any functions
