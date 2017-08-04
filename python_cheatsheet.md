@@ -44,7 +44,8 @@ coral, yellowgreen, lightskyblue, gold, gray, black
 ### Basic plotting
 ```python
 import matplotlib.pyplot as plt
-%matplotlib inline #only when in an Ipython notebook
+plt.rcParams['pdf.fonttype'] = 42 # makes editing text in Illustrator much easier
+%matplotlib inline # only when in an Ipython notebook
 # it is always better to use axes instead of plt for more control of 
 # multiple axes and/or multiple plots
 ax1, fig = plt.subplots() 
