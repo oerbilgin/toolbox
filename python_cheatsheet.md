@@ -62,6 +62,19 @@ ax1.set_ylim(low, high)
 ax2 = ax1.twinx() # for separate y-axes
 ax2.plot(x, y)
 ```
+### Tick labels
+```python
+# using plot object
+plt.xticks(tick_positions, labels)
+
+# using axes object
+ax.set_xticks(tick_positions)
+ax.set_xticklabels(labels)
+
+# rotation (kwargs are the same for plt or ax)
+# set 'ha' to 'right' to align right when rotating between 0 and 90
+plt.xticks(tick_positions, labels, rotation=45, ha='right')
+```
 
 ### Basic legend stuff
 * This will place the legend box outside the plot, with the upper left corner of the plot just to the right of the upper right corner of the plot
