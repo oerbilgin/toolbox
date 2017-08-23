@@ -5,6 +5,8 @@ import matplotlib.cm as cmx
 from scipy.stats import t
 from matplotlib.patches import Ellipse
 import matplotlib.patches as mpatches
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 def hist_silhouette(hist_obj, ignore_zero=True):
     """
