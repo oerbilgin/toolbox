@@ -5,6 +5,7 @@ import matplotlib.cm as cmx
 from scipy.stats import t
 from matplotlib.patches import Ellipse
 import matplotlib.patches as mpatches
+import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
