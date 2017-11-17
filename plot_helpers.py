@@ -163,9 +163,9 @@ def calc_perp(A, B, C):
     http://stackoverflow.com/questions/1811549/perpendicular-on-a-line-
         from-a-given-point
     """  
-    Ax,Ay = A
-    Bx,By = B
-    Cx,Cy = C
+    Ax,Ay = np.asarray(A).astype(float)
+    Bx,By = np.asarray(B).astype(float)
+    Cx,Cy = np.asarray(C).astype(float)
     t= ((Cx-Ax)*(Bx-Ax) + (Cy-Ay)*(By-Ay)) / ((Bx-Ax)**2 + (By-Ay)**2)
     Dx = Ax + t*(Bx-Ax)
     Dy = Ay + t*(By-Ay)
