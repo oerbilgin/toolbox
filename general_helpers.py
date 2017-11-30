@@ -52,3 +52,47 @@ def load_dataframe(fname, filetype=None, key=None):
     # remove rows that are empty
     df = df[pd.notnull(df).all(axis=1)]
     return df
+
+def partition_indexes(totalsize, numberofpartitions, offset=0):
+	"""
+	Used to split up an iterable into multiple chunks
+	This function returns the indices to create chunks of roughly the
+	same size
+
+	From:
+	http://stackoverflow.com/questions/33878939/
+		get-indices-of-roughly-equal-sized-chunks
+
+	Inputs
+	------
+	totalsize: length of the iterable to partition
+	numberofpartitions: number of partitions to split the iterable into
+	offset: number to add to the partition indices. Used when you're
+			partitioning a slice of something, for example if you want
+			to parititon array[100:200] into 4 partitions, this function
+			would return [[0, 25], [25, 50], [50, 75], [75, 100]] if
+			offset were kept default. So you would set offset to 100,
+			which would return
+			[[100, 125], [125, 150], [150, 175], [175, 200]]
+	"""
+
+	chunk_indices = []
+	# Compute the chunk size (integer division; i.e. assuming Python 2.7)
+	chunksize = totalsize / numberofpartitions
+	# How many chunks need an extra 1 added to the size?
+	remainder = totalsize - chunksize * numberofpartitions
+	a = 0
+	for i in xrange(numberofpartitions):
+		b = a + chunksize + (i < remainder)
+		# Yield the inclusive-inclusive range
+#         chunk_indices.append([a, b - 1])
+		chunk_indices.append([a, b])
+		a = b
+
+	offset_chunk_indices = []
+	for indices in chunk_indices:
+		i = indices[0] + offset
+		j = indices[1] + offset
+		offset_chunk_indices.append([i, j])
+
+	return offset_chunk_indices
