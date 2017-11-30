@@ -96,3 +96,36 @@ def partition_indexes(totalsize, numberofpartitions, offset=0):
 		offset_chunk_indices.append([i, j])
 
 	return offset_chunk_indices
+def upper_tri_index_unravel(i, j, n, printer=False):
+    '''
+    Formula to get linear index of an upper triangle of a square matrix (nxn) while ignoring the main diagonal
+    
+    Input:
+    i, j: coordinates in the upper triangle (first one is (0,1); (0,0) doesn't exist)
+    n: shape of the square (e.g. for 4x4, n=4)
+    
+    Output: single value of the linear index
+    
+    Formula from:
+    http://stackoverflow.com/questions/27086195/linear-index-upper-triangular-matrix
+    '''
+    
+    k = (n*(n-1)/2) - (n-i)*((n-i)-1)/2 + j - i - 1
+    
+    if printer:
+        print 'Coordinates:', (i,j)
+        print 'Linear index:', k
+    
+    return k
+def upper_tri_index_ravel(k, n):
+    """
+    Formulae to get coordinates from a linear index of a square matrix while ignoring the main diagonal
+
+    k is the linear index, n is the length of one side of matrix
+
+    Formula from:
+    http://stackoverflow.com/questions/27086195/linear-index-upper-triangular-matrix
+    """
+    i = int(n - 2 - math.floor(math.sqrt(-8*k + 4*n*(n-1)-7)/2.0 - 0.5))
+    j = int(k + i + 1 - n*(n-1)/2 + (n-i)*((n-i)-1)/2)
+    return (i, j)
