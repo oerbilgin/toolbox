@@ -1,5 +1,14 @@
 # Python Cheatsheet
 ## Pandas
+### NumPy `islcose()`
+* Incredibly useful for things like matching mz, rt info between mzmine, metatlas, etc.
+```python
+mz = 123.4567
+# find all detected m/z within .001 daltons
+df[np.isclose(df['mz'], mz, atol=.001)]
+# could alternately calculate atol with my ppm functions for better matching
+```
+
 ### String methods reminders
 * Useful options are `case=False` and `regex=False`. Turning regex off is sometimes critical to avoid errors, but then you can't search for multiple patterns using `contains()`.
 
