@@ -9,6 +9,34 @@
 * **.str.startswith()** and **.str.endswith()**
 	* Both of them use **tuples** to separate patterns with an OR statement
 
+## Decorators
+From https://pabloariasal.github.io/python-decorators-from-the-ground-up/
+
+Example decorator for timing a function
+
+```python
+import time
+
+# this is the "decorating" function
+def timer(func):
+    def inner_func(*args, **kwargs):
+        start = time.time() # set up timing
+        func_out = func(*args, **kwargs) # do the funciton
+        print time.time() - start # print the log
+        return func_out # return the function's output
+    return inner_func # return the function's output
+
+# decorate a function
+@timer
+def test_func(a, b, c='jedi'):
+    return a + b + c
+
+# use the function as normal
+>>> test_func('the', 'last')
+1.19209289551e-06
+'thelastjedi'
+```
+
 ## Argument Parsing
 ```python
 import argparse
