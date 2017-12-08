@@ -7,6 +7,18 @@ Helpful python functions aggregated into one place
 ### `load_dataframe()`
 Infers what Pandas dataframe loader to use based on the file extension (or you can override), and returns the loaded dataframe.
 
+### `partition_indexes()`
+Returns index positions to break up an iterable into chunks
+
+### `upper_tri_index_unravel()`
+Get linear index of an upper triangle of a square matrix (nxn) while ignoring the main diagonal
+
+### `upper_tri_index_ravel()`
+Get coordinates from a linear index of a square matrix while ignoring the main diagonal
+
+### `etree_to_dict()`
+Makes a JSON-like dictionary from an xml file.
+
 ## Mass Spectrometry helpers
 * MetAtlas is an import, but is not required for most functions
 * rdkit is an import, but is currently not required for any functions
