@@ -1,3 +1,7 @@
+from collections import defaultdict
+import math
+import pandas as pd
+
 def load_dataframe(fname, filetype=None, key=None):
     """
     Uses the appropriate pandas function to load a file based on the
@@ -129,3 +133,34 @@ def upper_tri_index_ravel(k, n):
     i = int(n - 2 - math.floor(math.sqrt(-8*k + 4*n*(n-1)-7)/2.0 - 0.5))
     j = int(k + i + 1 - n*(n-1)/2 + (n-i)*((n-i)-1)/2)
     return (i, j)
+
+def etree_to_dict(t):
+	"""
+	from https://stackoverflow.com/questions/2148119/how-to-convert-an-xml-string-to-a-dictionary-in-python
+
+	input needs to be made like this:
+		from xml.etree import cElementTree as ET
+		xml_text = <XML STRING>
+		xml_code = ET.XML(xml_text)
+		xml_dict = etree_to_dict(xml_code)
+
+	output is a dictionary
+	"""
+	d = {t.tag: {} if t.attrib else None}
+	children = list(t)
+	if children:
+		dd = defaultdict(list)
+		for dc in map(etree_to_dict, children):
+			for k, v in dc.items():
+				dd[k].append(v)
+		d = {t.tag: {k:v[0] if len(v) == 1 else v for k, v in dd.items()}}
+	if t.attrib:
+		d[t.tag].update(('@' + k, v) for k, v in t.attrib.items())
+	if t.text:
+		text = t.text.strip()
+		if children or t.attrib:
+			if text:
+				d[t.tag]['#text'] = text
+		else:
+			d[t.tag] = text
+	return d
