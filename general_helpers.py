@@ -139,10 +139,10 @@ def etree_to_dict(t):
 	from https://stackoverflow.com/questions/2148119/how-to-convert-an-xml-string-to-a-dictionary-in-python
 
 	input needs to be made like this:
-		from xml.etree import cElementTree as ET
-		xml_text = <XML STRING>
-		xml_code = ET.XML(xml_text)
-		xml_dict = etree_to_dict(xml_code)
+		from lxml import etree
+		tree = etree.parse("./test.xml") # filename, can be .gz
+		root = tree.getroot()
+		xml_dict = etree_to_dict(root)
 
 	output is a dictionary
 	"""
