@@ -93,6 +93,21 @@ plt.title('title')
 plt.show()
 ```
 
+### color bar
+From https://stackoverflow.com/questions/8342549/matplotlib-add-colorbar-to-a-sequence-of-line-plots
+```python
+fig, ax = plt.subplots()
+... # whatever plot you want to make
+sm = plt.cm.ScalarMappable(
+	cmap='viridis', # any color map
+	norm=plt.Normalize(vmin=0, vmax=1) # vmin and vmax are your map's min and max
+	)
+sm._A = []
+cbar = fig.colorbar(sm, orientation='vertical')
+cbar.ax.set_ylabel('tanimoto score')
+cba.ax.set_yticks() # can do normal axes functions this way too
+```
+
 ### Fun axes functions
 ```python
 ax1.set_yscale('log') # try to capture any y-values that are zero, otherwise they won't be plotted
