@@ -1,5 +1,14 @@
 # Python Cheatsheet
 ## Pandas
+### NumPy `islcose()`
+* Incredibly useful for things like matching mz, rt info between mzmine, metatlas, etc.
+```python
+mz = 123.4567
+# find all detected m/z within .001 daltons
+df[np.isclose(df['mz'], mz, atol=.001)]
+# could alternately calculate atol with my ppm functions for better matching
+```
+
 ### String methods reminders
 * Useful options are `case=False` and `regex=False`. Turning regex off is sometimes critical to avoid errors, but then you can't search for multiple patterns using `contains()`.
 
@@ -8,6 +17,34 @@
 	* I do not know of a way to do an `AND` statement within the function
 * **.str.startswith()** and **.str.endswith()**
 	* Both of them use **tuples** to separate patterns with an OR statement
+
+## Decorators
+From https://pabloariasal.github.io/python-decorators-from-the-ground-up/
+
+Example decorator for timing a function
+
+```python
+import time
+
+# this is the "decorating" function
+def timer(func):
+    def inner_func(*args, **kwargs):
+        start = time.time() # set up timing
+        func_out = func(*args, **kwargs) # do the funciton
+        print time.time() - start # print the log
+        return func_out # return the function's output
+    return inner_func # return the function's output
+
+# decorate a function
+@timer
+def test_func(a, b, c='jedi'):
+    return a + b + c
+
+# use the function as normal
+>>> test_func('the', 'last')
+1.19209289551e-06
+'thelastjedi'
+```
 
 ## Argument Parsing
 ```python
@@ -54,6 +91,21 @@ ax1.set_ylabel('label')
 ax1.set_xlabel('label')
 plt.title('title')
 plt.show()
+```
+
+### color bar
+From https://stackoverflow.com/questions/8342549/matplotlib-add-colorbar-to-a-sequence-of-line-plots
+```python
+fig, ax = plt.subplots()
+... # whatever plot you want to make
+sm = plt.cm.ScalarMappable(
+	cmap='viridis', # any color map
+	norm=plt.Normalize(vmin=0, vmax=1) # vmin and vmax are your map's min and max
+	)
+sm._A = []
+cbar = fig.colorbar(sm, orientation='vertical')
+cbar.ax.set_ylabel('tanimoto score')
+cba.ax.set_yticks() # can do normal axes functions this way too
 ```
 
 ### Fun axes functions
