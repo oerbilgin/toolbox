@@ -12,6 +12,9 @@ parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
+# preferred git log
+alias glog='git log --name-only --decorate --graph --all'
+
 # nice extractor
 extract () {
         if [ -f $1 ] ; then
