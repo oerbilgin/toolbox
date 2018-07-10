@@ -9,6 +9,42 @@ import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
+def get_n_shades(color, n_shades):
+    """ Makes desired number of shades for a given color
+    
+    Inputs
+    ------
+    color: named color, hex string, or RGB tuple
+    n_shades: number of shades desired (int)
+    
+    Returns
+    -------
+    array of rgb colors
+    
+    """
+    if isinstance(color, str):
+        if color[0] == '#':
+            # supplied as a hex
+            c = colors.hex2color(color)
+        else:
+            # named color
+            c = colors.hex2color(colors.cnames[color])
+    else:
+        # color should be rgb
+        c = color
+
+    # convert color to hsv (hue, saturation, value/brightness)
+    chsv = colors.rgb_to_hsv(c)
+    # repeat hsv array n_shades # of times
+    arhsv = np.tile(chsv,n_shades).reshape(n_shades, 3)
+    # decrease saturation to a min of 0.25 by n_shades steps
+    arhsv[:,1] = np.linspace(chsv[1],0.25,n_shades)
+    # increase brightness to a max of 1 by n_shades steps
+    arhsv[:,2] = np.linspace(chsv[2],1,n_shades)
+    # convert to rgb
+    rgb = colors.hsv_to_rgb(arhsv)
+    return rgb
+
 def hist_silhouette(hist_obj, ignore_zero=True):
     """
     Takes in a matplotlib plt.hist() or numpy.histogram() output 
